@@ -4436,3 +4436,1358 @@ Step 43: แก้ไขหน้า Login.tsx ใส่ลืมรหัสผ
               </Link>
             </div>
 .
+
+---------------------------------
+⚡ DAY 8
+---------------------------------
+8. Workshop ระบบ Inventory Management (ต่อ)
+---------------------------------
+เมื่อได้โปรเจ็กต์มา
+---
+1. ติดตั้ง library ของ nodejs
+---
+npm install
+
+2. ติดตั้ง library ของ laravel
+---
+composer install
+
+3. ทำการ migrate database และ seed
+---
+php artisan migrate
+php artisan db:seed
+
+4: ทดสอบรันโปรเจ็กต์
+---
+composer dev
+
+----
+Workshop ระบบ Inventory Management (ต่อ)
+----
+Step 1: ติดตั้ง Library สำหรับให้ JavaScript สามารถเข้าถึง Route ใน Laravelได้
+---
+composer require tightenco/ziggy
+npm install ziggy-js
+
+Step 2: Config ให้สามารถใช้งาน Ziggy ในโปรเจ็กต์ inertia กับ React ได้
+---
+resources/js/app.tsx
+---
+import { route as routeFn } from 'ziggy-js'
+
+// ประกาศ type สำหรับ Ziggy
+declare global {
+  const route: typeof routeFn;
+}
+
+---
+esources\views\app.blade.php
+---
+{{-- การเรียกใช้ route ของ ziggy  --}}
+    @routes
+
+Step 3: เพิ่มตัวแปรที่จะแชร์มายังหน้า React ทีไฟล์ 
+---
+app\Http\Middleware\HandleInertiaRequests.php
+---
+public function share(Request $request): array
+    {
+        return array_merge(parent::share($request), [
+            'auth' => [
+                'user'=> $request->user(),
+            ]
+        ]);
+    }
+
+Step 4: กำหนดค่าเริ่มต้นให้ App เราเป็นภาษาไทย
+---
+ที่ไฟล์ .env
+----
+# กำหนดค่า locale ของแอปพลิเคชัน
+APP_LOCALE=th
+APP_FALLBACK_LOCALE=en
+APP_FAKER_LOCALE=en_US
+
+Step 5: การกำหนดตัวข้อความที่ใช้แปลแต่ละภาษา
+---
+สร้างโฟลเดอร์ภาษาไว้ที่ resources/lang/th
+---
+resources/lang/th/validation.php
+---
+<?php
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Validation Language Lines
+    |--------------------------------------------------------------------------
+    |
+    | The following language lines contain the default error messages used by
+    | the validator class. Some of these rules have multiple versions such
+    | as the size rules. Feel free to tweak each of these messages here.
+    |
+    */
+
+    'accepted' => 'กรุณายอมรับ :attribute',
+    'accepted_if' => 'กรุณายอมรับ :attribute เมื่อ :other เป็น :value',
+    'active_url' => ':attribute ไม่ใช่ URL ที่ถูกต้อง',
+    'after' => ':attribute ต้องเป็นวันหลังจาก :date',
+    'after_or_equal' => ':attribute ต้องเป็นวันหลังจากหรือเท่ากับ :date',
+    'alpha' => ':attribute ต้องประกอบด้วยตัวอักษรเท่านั้น',
+    'alpha_dash' => ':attribute ต้องประกอบด้วยตัวอักษร ตัวเลข เครื่องหมายขีดกลาง และเครื่องหมายขีดล่างเท่านั้น',
+    'alpha_num' => ':attribute ต้องประกอบด้วยตัวอักษรและตัวเลขเท่านั้น',
+    'array' => ':attribute ต้องเป็นอาร์เรย์',
+    'before' => ':attribute ต้องเป็นวันก่อน :date',
+    'before_or_equal' => ':attribute ต้องเป็นวันก่อนหรือเท่ากับ :date',
+    'between' => [
+        'numeric' => ':attribute ต้องอยู่ระหว่าง :min และ :max',
+        'file' => ':attribute ต้องมีขนาดระหว่าง :min และ :max กิโลไบต์',
+        'string' => ':attribute ต้องมีความยาวระหว่าง :min และ :max ตัวอักษร',
+        'array' => ':attribute ต้องมีจำนวนระหว่าง :min และ :max รายการ',
+    ],
+    'boolean' => ':attribute ต้องเป็นจริงหรือเท็จเท่านั้น',
+    'confirmed' => 'การยืนยัน :attribute ไม่ตรงกัน',
+    'current_password' => 'รหัสผ่านไม่ถูกต้อง',
+    'date' => ':attribute ไม่ใช่วันที่ที่ถูกต้อง',
+    'date_equals' => ':attribute ต้องเป็นวันที่เท่ากับ :date',
+    'date_format' => ':attribute ไม่ตรงกับรูปแบบ :format',
+    'declined' => ':attribute ต้องถูกปฏิเสธ',
+    'declined_if' => ':attribute ต้องถูกปฏิเสธเมื่อ :other เป็น :value',
+    'different' => ':attribute และ :other ต้องแตกต่างกัน',
+    'digits' => ':attribute ต้องเป็น :digits หลัก',
+    'digits_between' => ':attribute ต้องมีความยาวระหว่าง :min และ :max หลัก',
+    'dimensions' => ':attribute มีขนาดของรูปภาพไม่ถูกต้อง',
+    'distinct' => ':attribute มีค่าที่ซ้ำกัน',
+    'email' => ':attribute ต้องเป็นอีเมลที่ถูกต้อง',
+    'ends_with' => ':attribute ต้องลงท้ายด้วย: :values',
+    'enum' => ':attribute ที่เลือกไม่ถูกต้อง',
+    'exists' => ':attribute ที่เลือกไม่ถูกต้อง',
+    'file' => ':attribute ต้องเป็นไฟล์',
+    'filled' => ':attribute ต้องมีค่า',
+    'gt' => [
+        'numeric' => ':attribute ต้องมากกว่า :value',
+        'file' => ':attribute ต้องมีขนาดมากกว่า :value กิโลไบต์',
+        'string' => ':attribute ต้องมีความยาวมากกว่า :value ตัวอักษร',
+        'array' => ':attribute ต้องมีมากกว่า :value รายการ',
+    ],
+    'gte' => [
+        'numeric' => ':attribute ต้องมากกว่าหรือเท่ากับ :value',
+        'file' => ':attribute ต้องมีขนาดมากกว่าหรือเท่ากับ :value กิโลไบต์',
+        'string' => ':attribute ต้องมีความยาวมากกว่าหรือเท่ากับ :value ตัวอักษร',
+        'array' => ':attribute ต้องมีอย่างน้อย :value รายการ',
+    ],
+    'image' => ':attribute ต้องเป็นรูปภาพ',
+    'in' => ':attribute ที่เลือกไม่ถูกต้อง',
+    'in_array' => ':attribute ไม่มีอยู่ใน :other',
+    'integer' => ':attribute ต้องเป็นจำนวนเต็ม',
+    'ip' => ':attribute ต้องเป็นที่อยู่ IP ที่ถูกต้อง',
+    'ipv4' => ':attribute ต้องเป็นที่อยู่ IPv4 ที่ถูกต้อง',
+    'ipv6' => ':attribute ต้องเป็นที่อยู่ IPv6 ที่ถูกต้อง',
+    'json' => ':attribute ต้องเป็นสตริง JSON ที่ถูกต้อง',
+    'lt' => [
+        'numeric' => ':attribute ต้องน้อยกว่า :value',
+        'file' => ':attribute ต้องมีขนาดน้อยกว่า :value กิโลไบต์',
+        'string' => ':attribute ต้องมีความยาวน้อยกว่า :value ตัวอักษร',
+        'array' => ':attribute ต้องมีน้อยกว่า :value รายการ',
+    ],
+    'lte' => [
+        'numeric' => ':attribute ต้องน้อยกว่าหรือเท่ากับ :value',
+        'file' => ':attribute ต้องมีขนาดน้อยกว่าหรือเท่ากับ :value กิโลไบต์',
+        'string' => ':attribute ต้องมีความยาวน้อยกว่าหรือเท่ากับ :value ตัวอักษร',
+        'array' => ':attribute ต้องไม่มีมากกว่า :value รายการ',
+    ],
+    'mac_address' => ':attribute ต้องเป็นที่อยู่ MAC ที่ถูกต้อง',
+    'max' => [
+        'numeric' => ':attribute ต้องไม่มากกว่า :max',
+        'file' => ':attribute ต้องมีขนาดไม่เกิน :max กิโลไบต์',
+        'string' => ':attribute ต้องมีความยาวไม่เกิน :max ตัวอักษร',
+        'array' => ':attribute ต้องมีไม่เกิน :max รายการ',
+    ],
+    'mimes' => ':attribute ต้องเป็นไฟล์ประเภท: :values',
+    'mimetypes' => ':attribute ต้องเป็นไฟล์ประเภท: :values',
+    'min' => [
+        'numeric' => ':attribute ต้องมีค่าอย่างน้อย :min',
+        'file' => ':attribute ต้องมีขนาดอย่างน้อย :min กิโลไบต์',
+        'string' => ':attribute ต้องมีความยาวอย่างน้อย :min ตัวอักษร',
+        'array' => ':attribute ต้องมีอย่างน้อย :min รายการ',
+    ],
+    'multiple_of' => ':attribute ต้องเป็นจำนวนเท่าของ :value',
+    'not_in' => ':attribute ที่เลือกไม่ถูกต้อง',
+    'not_regex' => 'รูปแบบของ :attribute ไม่ถูกต้อง',
+    'numeric' => ':attribute ต้องเป็นตัวเลข',
+    'password' => 'รหัสผ่านไม่ถูกต้อง',
+    'present' => ':attribute ต้องมีอยู่',
+    'prohibited' => ':attribute ไม่ได้รับอนุญาต',
+    'prohibited_if' => ':attribute ไม่ได้รับอนุญาตเมื่อ :other เป็น :value',
+    'prohibited_unless' => ':attribute ไม่ได้รับอนุญาตเว้นแต่ :other อยู่ใน :values',
+    'prohibits' => ':attribute ไม่อนุญาตให้ :other มีอยู่',
+    'regex' => 'รูปแบบของ :attribute ไม่ถูกต้อง',
+    'required' => 'กรุณากรอก :attribute',
+    'required_array_keys' => ':attribute ต้องมีรายการสำหรับ: :values',
+    'required_if' => ':attribute จำเป็นเมื่อ :other เป็น :value',
+    'required_unless' => ':attribute จำเป็นเว้นแต่ :other อยู่ใน :values',
+    'required_with' => ':attribute จำเป็นเมื่อมี :values',
+    'required_with_all' => ':attribute จำเป็นเมื่อมี :values ทั้งหมด',
+    'required_without' => ':attribute จำเป็นเมื่อไม่มี :values',
+    'required_without_all' => ':attribute จำเป็นเมื่อไม่มี :values ใดเลย',
+    'same' => ':attribute และ :other ต้องตรงกัน',
+    'size' => [
+        'numeric' => ':attribute ต้องเท่ากับ :size',
+        'file' => ':attribute ต้องมีขนาด :size กิโลไบต์',
+        'string' => ':attribute ต้องมีความยาว :size ตัวอักษร',
+        'array' => ':attribute ต้องมี :size รายการ',
+    ],
+    'starts_with' => ':attribute ต้องขึ้นต้นด้วยหนึ่งใน: :values',
+    'string' => ':attribute ต้องเป็นสตริง',
+    'timezone' => ':attribute ต้องเป็นโซนเวลาที่ถูกต้อง',
+    'unique' => ':attribute ถูกใช้ไปแล้ว',
+    'uploaded' => ':attribute อัปโหลดล้มเหลว',
+    'url' => ':attribute ต้องเป็น URL ที่ถูกต้อง',
+    'uuid' => ':attribute ต้องเป็น UUID ที่ถูกต้อง',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Validation Language Lines
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify custom validation messages for attributes using the
+    | convention "attribute.rule" to name the lines. This makes it quick to
+    | specify a specific custom language line for a given attribute rule.
+    |
+    */
+
+    'custom' => [
+        'name' => [
+            'required' => 'กรุณากรอกชื่อของคุณ',
+            'string' => 'ชื่อต้องเป็นข้อความ',
+            'max' => 'ชื่อต้องมีความยาวไม่เกิน :max ตัวอักษร',
+        ],
+        'username' => [
+            'required' => 'กรุณากรอกชื่อผู้ใช้ของคุณ',
+            'string' => 'ชื่อผู้ใช้ต้องเป็นข้อความ',
+            'max' => 'ชื่อผู้ใช้ต้องมีความยาวไม่เกิน :max ตัวอักษร',
+            'unique' => 'ชื่อผู้ใช้นี้ถูกใช้ไปแล้ว',
+            'alpha_dash' => 'ชื่อผู้ใช้ต้องประกอบด้วยตัวอักษร ตัวเลข เครื่องหมายขีดกลาง และเครื่องหมายขีดล่างเท่านั้น',
+        ],
+        'email' => [
+            'required' => 'กรุณากรอกอีเมลของคุณ',
+            'string' => 'อีเมลต้องเป็นข้อความ',
+            'email' => 'กรุณากรอกอีเมลที่ถูกต้อง',
+            'max' => 'อีเมลต้องมีความยาวไม่เกิน :max ตัวอักษร',
+            'unique' => 'อีเมลนี้ถูกใช้ไปแล้ว',
+        ],
+        'password' => [
+            'required' => 'กรุณากรอกรหัสผ่านของคุณ',
+            'confirmed' => 'การยืนยันรหัสผ่านไม่ตรงกัน',
+        ],
+        'terms-of-service' => [
+            'required' => 'กรุณายอมรับข้อกำหนดและเงื่อนไขการใช้งาน',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Validation Attributes
+    |--------------------------------------------------------------------------
+    |
+    | The following language lines are used to swap our attribute placeholder
+    | with something more reader friendly such as "E-Mail Address" instead
+    | of "email". This simply helps us make our message more expressive.
+    |
+    */
+
+    'attributes' => [
+        'name' => 'ชื่อ',
+        'username' => 'ชื่อผู้ใช้',
+        'email' => 'อีเมล',
+        'password' => 'รหัสผ่าน',
+        'password_confirmation' => 'ยืนยันรหัสผ่าน',
+        'terms-of-service' => 'ข้อกำหนดและเงื่อนไขการใช้งาน',
+    ],
+]; 
+
+Step 6: ไฟล์สำหรับกการเก็บ Message ต่างๆ ในการ authen
+---
+resources/lang/th/auth.php
+---
+<?php
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication Language Lines
+    |--------------------------------------------------------------------------
+    |
+    | The following language lines are used during authentication for various
+    | messages that we need to display to the user. You are free to modify
+    | these language lines according to your application's requirements.
+    |
+    */
+
+    'failed' => 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
+    'password' => 'รหัสผ่านที่กรอกไม่ถูกต้อง',
+    'throttle' => 'คุณพยายามเข้าสู่ระบบมากเกินไป กรุณารอ :seconds วินาที',
+    'login' => 'เข้าสู่ระบบ',
+    'register' => 'ลงทะเบียน',
+    'email' => 'อีเมล',
+    'password' => 'รหัสผ่าน',
+    'remember_me' => 'จดจำฉัน',
+    'forgot_password' => 'ลืมรหัสผ่าน?',
+    'reset_password' => 'รีเซ็ตรหัสผ่าน',
+    'confirm_password' => 'ยืนยันรหัสผ่าน',
+    'name' => 'ชื่อ',
+    'already_registered' => 'มีบัญชีอยู่แล้ว?',
+    'no_account' => 'ยังไม่มีบัญชี?',
+    'logout' => 'ออกจากระบบ',
+    'profile' => 'โปรไฟล์',
+    'settings' => 'ตั้งค่า',
+    
+    // ข้อความสำหรับการรีเซ็ตรหัสผ่าน
+    'passwords' => [
+        'reset' => 'รหัสผ่านของคุณได้รับการรีเซ็ตแล้ว',
+        'sent' => 'เราได้ส่งลิงก์รีเซ็ตรหัสผ่านไปยังอีเมลของคุณแล้ว',
+        'throttled' => 'กรุณารอสักครู่ก่อนลองอีกครั้ง',
+        'token' => 'โทเค็นรีเซ็ตรหัสผ่านไม่ถูกต้อง',
+        'user' => 'ไม่พบผู้ใช้ที่มีอีเมลนี้ในระบบ',
+    ],
+]; 
+
+Step 7: สร้างไฟล์ RegisterRequest.php
+---
+\app\Http\Requests\Auht\RegisterRequest.php
+---
+<?php
+
+namespace App\Http\Requests\Auth;
+
+use App\Models\User;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules;
+
+class RegisterRequest extends FormRequest
+{
+    // ฟังก์ชันนี้จะใช้ในการกำหนดกฎการตรวจสอบข้อมูลที่ส่งเข้ามา
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    // ฟังก์ชันนี้จะใช้ในการกำหนดกฎการตรวจสอบข้อมูลที่ส่งเข้ามา
+    public function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'unique:' . User::class, 'alpha_dash:ascii'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'terms-of-service' => ['accepted']
+        ];
+
+        // Password::defaults() จะใช้กฎการตรวจสอบรหัสผ่านที่กำหนดไว้ในไฟล์ config/auth.php
+        // โดยจะมีความยาวอย่างน้อย 8 ตัวอักษร และต้องมีตัวอักษรพิมพ์ใหญ่ ตัวอักษรพิมพ์เล็ก และตัวเลข
+    }
+
+    
+    // ฟังก์ชันนี้แสดงค่าความหมายของกฎการตรวจสอบข้อมูลที่ส่งเข้ามา
+    public function attributes(): array
+    {
+        return [
+            'name' => 'ชื่อ',
+            'username' => 'ชื่อผู้ใช้',
+            'email' => 'อีเมล',
+            'password' => 'รหัสผ่าน',
+            'terms-of-service' => 'ข้อกำหนดและเงื่อนไขการใช้งาน',
+        ];
+    }
+
+    // ฟังก์ชันนี้แสดงข้อความ terms ของกฎการตรวจสอบข้อมูลที่ส่งเข้ามา
+    public function messages(): array
+    {
+        return [
+            'terms-of-service.accepted' => 'คุณต้องยอมรับข้อกำหนดและเงื่อนไขการใช้งาน',
+        ];
+    }
+}
+
+
+Step 8: สร้างไฟล์ RegisterController.php
+---
+\app\Http\Controllers\Auth\RegisteredUserController.php
+---
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Models\User;
+// use App\Providers\RouteServiceProvider;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class RegisteredUserController extends Controller
+{
+    /**
+     * Display the registration view.
+     */
+    public function create(): Response
+    {
+        return Inertia::render('Auth/Register');
+    }
+
+    /**
+     * Handle an incoming registration request.
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function store(RegisterRequest $request): RedirectResponse
+    {
+        $user = User::create([
+            'name' => $request->name,
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect()->intended('/')->with('success', 'สมัครสมาชิกสำเร็จ!');
+        // return redirect(RouteServiceProvider::HOME)->with('success', 'สมัครสมาชิกสำเร็จ!');
+    }
+}
+
+Step 9: เพิ่ม route สำหรับการทำ auth
+---
+\routes\auth.php
+----
+<?php
+use App\Http\Controllers\Auth\RegisteredUserController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| เส้นทางสำหรับผู้ใช้ที่ยังไม่ได้เข้าสู่ระบบ (Guest Routes)
+|--------------------------------------------------------------------------
+|
+| เส้นทางในกลุ่มนี้จะใช้ middleware 'guest' ซึ่งจะอนุญาตให้เข้าถึงได้
+| เฉพาะผู้ใช้ที่ยังไม่ได้เข้าสู่ระบบเท่านั้น หากผู้ใช้เข้าสู่ระบบแล้ว
+| จะถูกเปลี่ยนเส้นทางไปยังหน้าหลัก
+|
+*/
+
+Route::middleware('guest')->group(function () {
+    // การลงทะเบียนผู้ใช้ใหม่
+    Route::get('register', [RegisteredUserController::class, 'create'])->name('register');  // แสดงฟอร์มลงทะเบียน
+    Route::post('register', [RegisteredUserController::class, 'store']);  // บันทึกข้อมูลผู้ใช้ใหม่
+});
+
+แก้ไขไฟล์ web.php
+---
+// ทำการรวมเส้นทางที่เกี่ยวข้องกับการลงทะเบียนผู้ใช้ใหม่
+require __DIR__.'/auth.php';
+
+
+Step 10: แก้ไขหน้า Register.tsx เพื่อส่งค่าไปยัง Laravel
+---
+import { useEffect, FormEventHandler } from 'react'
+import { Head, Link, useForm } from '@inertiajs/react'
+import GuestLayout from '@/Layouts/GuestLayout'
+import TextInput from '@/Components/TextInput'
+import InputLabel from '@/Components/InputLabel'
+import InputError from '@/Components/InputError'
+
+interface RegisterForm {
+  name: string
+  email: string
+  username: string
+  password: string
+  password_confirmation: string
+  'terms-of-service': boolean
+  [key: string]: string | boolean
+}
+
+export default function Register() {
+
+  // ฟังก์ชันสำหรับจัดการการส่งฟอร์ม
+  const { data, setData, post, processing, errors, reset } = useForm<RegisterForm>({
+    name: '',
+    email: '',
+    username: '',
+    password: '',
+    password_confirmation: '',
+    'terms-of-service': false,
+  })
+
+  // ฟังก์ชันสำหรับการ reset ข้อมูลฟอร์ม
+  useEffect(() => {
+    return () => {
+      reset('password', 'password_confirmation')
+    }
+  }, [])
+
+  // ฟังก์ชันสำหรับการ submit ฟอร์ม
+  const submit: FormEventHandler = (e) => {
+    e.preventDefault()
+    
+    // ตรวจสอบก่อนส่งข้อมูล
+    if (!data['terms-of-service']) {
+      setData('terms-of-service', false)
+    }
+    
+    post(route('register'))
+  }
+
+  return (
+    <GuestLayout>
+        <Head>
+            <title>Register</title>
+            <meta name="description" content="Register page description" />
+        </Head>
+
+        <form onSubmit={submit} method='POST'>
+
+        {/* ชื่อ */}
+        <div>
+          <InputLabel htmlFor="name" value="ชื่อ" />
+          <TextInput
+            id="name"
+            name="name"
+            value={data.name}
+            className="mt-1 block w-full"
+            autoComplete="name"
+            onChange={(e) => setData('name', e.target.value)}
+          />
+          <InputError message={errors.name} className="mt-2" />
+        </div>
+
+        {/* อีเมล */}
+        <div className="mt-4">
+          <InputLabel htmlFor="email" value="อีเมล" />
+          <TextInput
+            id="email"
+            type="text"
+            name="email"
+            value={data.email}
+            className="mt-1 block w-full"
+            onChange={(e) => setData('email', e.target.value)}
+          />
+          <InputError message={errors.email} className="mt-2" />
+        </div>
+
+        {/* ชื่อผู้ใช้งาน */}
+        <div className="mt-4">
+          <InputLabel htmlFor="username" value="ชื่อผู้ใช้งาน" />
+          <TextInput
+            id="username"
+            type="text"
+            name="username"
+            value={data.username}
+            className="mt-1 block w-full"
+            onChange={(e) => setData('username', e.target.value)}
+          />
+          <InputError message={errors.username} className="mt-2" />
+        </div>
+
+        {/* รหัสผ่าน */}
+        <div className="mt-4">
+          <InputLabel htmlFor="password" value="รหัสผ่าน" />
+          <TextInput
+            id="password"
+            type="password"
+            name="password"
+            value={data.password}
+            className="mt-1 block w-full"
+            onChange={(e) => setData('password', e.target.value)}
+          />
+          <InputError message={errors.password} className="mt-2" />
+        </div>
+
+        <div className="mt-4">
+          <InputLabel htmlFor="password_confirmation" value="ยืนยันรหัสผ่าน" />
+          <TextInput
+            id="password_confirmation"
+            type="password"
+            name="password_confirmation"
+            value={data.password_confirmation}
+            className="mt-1 block w-full"
+            onChange={(e) => setData('password_confirmation', e.target.value)}
+          />
+          <InputError message={errors.password_confirmation} className="mt-2" />
+        </div>
+
+        <div className="mt-4">
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              name="terms-of-service"
+              id="terms-of-service"
+              checked={data['terms-of-service'] as boolean}
+              onChange={(e) => setData('terms-of-service', e.target.checked)}
+              className="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+            />
+            <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+              ยอมรับ <a href="/terms-of-service" className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
+                ข้อกำหนดและเงื่อนไขการใช้งาน
+              </a>
+            </span>
+          </label>
+          <InputError message={errors['terms-of-service']} className="mt-2" />
+        </div>
+
+        <div className="flex items-center justify-end mt-4">
+          <Link
+            href={route('login')}
+            className="text-sm text-gray-600 dark:text-gray-400 dark:hover:text-gray-300 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-4"
+          >
+            มีบัญชีอยู่แล้ว?
+          </Link>
+
+          <button
+            type="submit"
+            className="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 ml-4 hover:cursor-pointer"
+            disabled={processing}
+          >
+            ลงทะเบียน
+          </button>
+        </div>
+
+        </form>
+    </GuestLayout>
+  )
+}
+
+Step 11: สร้างไฟล์ LoginRequest.php
+---
+<?php
+
+namespace App\Http\Requests\Auth;
+
+use Illuminate\Support\Str;
+use Illuminate\Auth\Events\Lockout;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\ValidationException;
+
+class LoginRequest extends FormRequest
+{
+
+    // ฟังก์ชัน authorize() จะใช้เพื่อกำหนดว่า request นี้สามารถทำได้หรือไม่ โดยจะ return true เสมอ
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    // ฟังก์ชัน rules() จะใช้เพื่อกำหนดกฎการตรวจสอบข้อมูลที่ผู้ใช้กรอกเข้ามาในฟอร์มเข้าสู่ระบบ
+    // โดยจะตรวจสอบว่า email และ password ที่กรอกมาถูกต้องหรือไม่
+    public function rules(): array
+    {
+        return [
+            'email' => ['required', 'string', 'email', 'exists:users,email'],
+            'password' => ['required', 'string'],
+        ];
+    }
+
+    // ฟังก์ชัน authenticate() จะใช้เพื่อทำการตรวจสอบข้อมูลการเข้าสู่ระบบของผู้ใช้ โดยจะทำการตรวจสอบว่า email และ password ที่กรอกมาถูกต้องหรือไม่
+    public function authenticate(): void
+    {
+        $this->ensureIsNotRateLimited();
+
+        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
+        }
+
+        RateLimiter::clear($this->throttleKey());
+    }
+
+    // ฟังก์ชันนี้จะใช้เพื่อกำหนดว่า request นี้สามารถทำได้หรือไม่ โดยตรวจสอบว่ามีการ login เกินจำนวนที่กำหนดหรือไม่
+    public function ensureIsNotRateLimited(): void
+    {
+        // ตรวจสอบว่า request นี้มีการ login เกินจำนวนที่กำหนดหรือไม่
+        // ถ้ามีการ login เกินจำนวนที่กำหนด จะทำการส่ง event Lockout และ throw ValidationException
+        // ถ้าไม่เกินจำนวนที่กำหนด จะ return ออกไป
+        // RateLimiter::tooManyAttempts($this->throttleKey(), 5) หมายถึงว่า ถ้ามีการ login เกิน 5 ครั้งใน 1 นาที จะถือว่ามีการ login เกินจำนวนที่กำหนด
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+            return;
+        }
+
+        event(new Lockout($this));
+
+        $seconds = RateLimiter::availableIn($this->throttleKey());
+
+        throw ValidationException::withMessages([
+            'email' => trans('auth.throttle', ['seconds' => $seconds]),
+        ]);
+    }
+
+    // ฟังก์ชันนี้ throttleKey() จะใช้เพื่อสร้าง key สำหรับการ throttle โดยจะใช้ email และ ip address ของผู้ใช้ในการสร้าง key
+    public function throttleKey()
+    {
+        return Str::lower($this->input('email')) . '|' . $this->ip();
+    }
+}
+
+---
+Step 12: สร้าง AuthenticatedSessionController.php สำหรับการทำ login
+---
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class AuthenticatedSessionController extends Controller
+{
+    /**
+     * แสดงฟอร์มเข้าสู่ระบบ
+     *
+     * @return \Inertia\Response
+    */
+    public function create(): Response
+    {
+        // ส่งฟอร์มเข้าสู่ระบบไปยัง view 'Auth/Login'
+        // โดยใช้ Inertia เพื่อสร้าง response ที่เป็น JSON และส่งไปยัง client
+        return Inertia::render('Auth/Login');
+    }
+
+
+    /**
+     * บันทึกข้อมูลการเข้าสู่ระบบ
+     *
+     * @param  \App\Http\Requests\Auth\LoginRequest  $request
+     * @return \Illuminate\Http\RedirectResponse
+    */
+    public function store(LoginRequest $request): RedirectResponse
+    {
+        // ตรวจสอบข้อมูลการเข้าสู่ระบบของผู้ใช้
+        $request->authenticate();
+
+        // ลบข้อมูลการเข้าสู่ระบบเก่าใน session
+        $request->session()->regenerate();
+
+        // เปลี่ยนเส้นทางไปยังหน้า dashboard หรือหน้าที่คุณต้องการหลังจากเข้าสู่ระบบ
+        // ในที่นี้เราจะเปลี่ยนเส้นทางไปยังหน้า dashboard
+        return redirect()->route('dashboard');
+    }
+
+
+    /**
+     * ออกจากระบบ
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+    */
+    public function destroy(Request $request): RedirectResponse
+    {
+        // เมื่อคุณเรียกใช้ Auth::logout() โดยไม่ระบุ guard Laravel จะใช้ guard เริ่มต้นที่กำหนดไว้ในไฟล์ config/auth.php ซึ่งโดยทั่วไปคือ 'web' อยู่แล้ว
+        Auth::logout();
+
+        // ลบข้อมูลการเข้าสู่ระบบของผู้ใช้ใน session
+        $request->session()->invalidate();
+
+        // สร้าง token ใหม่สำหรับ session เพื่อป้องกันการโจมตี CSRF (Cross-Site Request Forgery)
+        $request->session()->regenerateToken();
+
+        // เปลี่ยนเส้นทางไปยังหน้าแรกหรือหน้าที่คุณต้องการหลังจากออกจากระบบ
+        // ในที่นี้เราจะเปลี่ยนเส้นทางไปยังหน้า login
+        return redirect()->route('login');
+    }
+}
+
+---
+Step 13: เพิ่ม Route ที่ไฟล์ 
+\routes\auth.php\auth.php
+----
+<?php
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| เส้นทางสำหรับผู้ใช้ที่ยังไม่ได้เข้าสู่ระบบ (Guest Routes)
+|--------------------------------------------------------------------------
+|
+| เส้นทางในกลุ่มนี้จะใช้ middleware 'guest' ซึ่งจะอนุญาตให้เข้าถึงได้
+| เฉพาะผู้ใช้ที่ยังไม่ได้เข้าสู่ระบบเท่านั้น หากผู้ใช้เข้าสู่ระบบแล้ว
+| จะถูกเปลี่ยนเส้นทางไปยังหน้าหลัก
+|
+*/
+
+Route::middleware('guest')->group(function () {
+    
+    // การลงทะเบียนผู้ใช้ใหม่
+    Route::get('register', [RegisteredUserController::class, 'create'])->name('register');  // แสดงฟอร์มลงทะเบียน
+    Route::post('register', [RegisteredUserController::class, 'store']);  // บันทึกข้อมูลผู้ใช้ใหม่
+
+    // การเข้าสู่ระบบ
+    Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');  // แสดงฟอร์มเข้าสู่ระบบ
+    Route::post('login', [AuthenticatedSessionController::class, 'store']);  // ตรวจสอบและสร้างเซสชันการเข้าสู่ระบบ
+     
+});
+
+---
+Step 14: แก้ไขไฟล์ Login.tsx
+resources\js\pages\Auth\Login.tsx
+----
+รันคำสั่ง php artisan cache:table เพื่อสร้างไฟล์ migration สำหรับตาราง cache
+
+จากนั้นรันคำสั่ง php artisan migrate เพื่อสร้างตาราง cache ในฐานข้อมูล
+
+แก้ไขหน้า Login.tsx
+---
+import { useEffect, FormEventHandler } from 'react'
+import { Head, Link, useForm } from '@inertiajs/react'
+import GuestLayout from '@/Layouts/GuestLayout'
+import InputError from '@/Components/InputError'
+import InputLabel from '@/Components/InputLabel'
+import TextInput from '@/Components/TextInput'
+
+interface LoginForm {
+  email: string
+  password: string
+  remember: boolean
+  [key: string]: string | boolean
+}
+
+export default function Login({ status }: { status?: string }) {
+
+  // ใช้ useForm hook เพื่อจัดการฟอร์ม
+  const { data, setData, post, processing, errors, reset } = useForm<LoginForm>({
+    email: '',
+    password: '',
+    remember: false,
+  })
+
+  // ใช้ useEffect hook เพื่อรีเซ็ตฟอร์มเมื่อคอมโพเนนต์ถูกสร้างขึ้น
+  useEffect(() => {
+    return () => {
+      reset('password')
+    }
+  }, [])
+
+  // ฟังก์ชันสำหรับ submit ฟอร์ม
+  const submit: FormEventHandler = (e) => {
+    e.preventDefault()
+    post(route('login'))
+  }
+
+  return (
+    <GuestLayout>
+
+        <Head>
+            <title>เข้าสู่ระบบ</title>
+            <meta name="description" content="Login page description" />
+        </Head>
+
+        {status && (
+          <div className="mb-4 font-medium text-sm text-green-600">
+            {status}
+          </div>
+        )}
+
+        <form onSubmit={submit} method='POST'>
+
+          <div>
+            <InputLabel htmlFor="email" value="อีเมล" />
+            <TextInput
+              id="email"
+              type="text"
+              name="email"
+              value={data.email}
+              className="mt-1 block w-full"
+              onChange={(e) => setData('email', e.target.value)}
+            />
+            <InputError message={errors.email} className="mt-2" />
+          </div>
+
+          <div className="mt-4">
+            <InputLabel htmlFor="password" value="รหัสผ่าน" />
+            <TextInput
+              id="password"
+              type="password"
+              name="password"
+              value={data.password}
+              className="mt-1 block w-full"
+              onChange={(e) => setData('password', e.target.value)}
+            />
+            <InputError message={errors.password} className="mt-2" />
+          </div>
+
+          <div className="flex items-center justify-between mt-4 mb-8">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                name="remember"
+                checked={data.remember}
+                onChange={(e) => setData('remember', e.target.checked)}
+                className="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+              />
+              <span className="ml-2 text-sm text-gray-600 dark:text-gray-400 dark:hover:text-gray-300">จดจำฉัน</span>
+            </label>
+
+            <Link
+              href={route('forgotpassword')}
+              className="text-sm text-gray-600 dark:text-gray-400 dark:hover:text-gray-300 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                ลืมรหัสผ่าน?
+              </Link>
+          </div>
+
+          <div className="flex items-center justify-end mt-4">
+              <Link
+                href={route('register')}
+                className="text-sm text-gray-600 dark:text-gray-400 dark:hover:text-gray-300 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-4"
+              >
+              ลงทะเบียน
+            </Link>
+
+            <button
+              type="submit"
+              className="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 ml-4 hover:cursor-pointer"
+              disabled={processing}
+            >
+              เข้าสู่ระบบ
+            </button>
+          </div>
+
+        </form>
+    </GuestLayout>
+  )
+}
+
+---
+Step 15: เพิ่ม route ที่ไฟล์ auth.php
+---
+<?php
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| เส้นทางสำหรับผู้ใช้ที่ยังไม่ได้เข้าสู่ระบบ (Guest Routes)
+|--------------------------------------------------------------------------
+|
+| เส้นทางในกลุ่มนี้จะใช้ middleware 'guest' ซึ่งจะอนุญาตให้เข้าถึงได้
+| เฉพาะผู้ใช้ที่ยังไม่ได้เข้าสู่ระบบเท่านั้น หากผู้ใช้เข้าสู่ระบบแล้ว
+| จะถูกเปลี่ยนเส้นทางไปยังหน้าหลัก
+|
+*/
+
+Route::middleware('guest')->group(function () {
+    
+    // การลงทะเบียนผู้ใช้ใหม่
+    Route::get('register', [RegisteredUserController::class, 'create'])->name('register');  // แสดงฟอร์มลงทะเบียน
+    Route::post('register', [RegisteredUserController::class, 'store']);  // บันทึกข้อมูลผู้ใช้ใหม่
+
+    // การเข้าสู่ระบบ
+    Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');  // แสดงฟอร์มเข้าสู่ระบบ
+    Route::post('login', [AuthenticatedSessionController::class, 'store']);  // ตรวจสอบและสร้างเซสชันการเข้าสู่ระบบ
+
+    // การขอรีเซ็ตรหัสผ่าน
+    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');  // แสดงฟอร์มขอรีเซ็ตรหัสผ่าน
+    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');  // ส่งอีเมลลิงก์รีเซ็ตรหัสผ่าน
+     
+});
+
+---
+Step 16: สร้าง Controller "PasswordResetLinkController.php"
+---
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
+use Inertia\Inertia;
+use Inertia\Response;
+use Illuminate\Support\Str;
+
+class PasswordResetLinkController extends Controller
+{
+    /**
+     * แสดงฟอร์มขอรีเซ็ตรหัสผ่าน
+     */
+    public function create(): Response
+    {
+        return Inertia::render('Auth/ForgotPassword', [
+            'status' => session('status'),
+        ]);
+    }
+
+    /**
+     * ส่งลิงก์รีเซ็ตรหัสผ่านไปยังอีเมลของผู้ใช้
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        // เราจะใช้ Password::sendResetLink เพื่อส่งลิงก์รีเซ็ตรหัสผ่านไปยังอีเมลของผู้ใช้
+        // หากส่งสำเร็จ เราจะส่งกลับไปยังหน้าฟอร์มพร้อมกับข้อความสถานะ
+        // หากไม่สำเร็จ เราจะส่งกลับไปยังหน้าฟอร์มพร้อมกับข้อความแสดงข้อผิดพลาด
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('status', __('auth.passwords.sent'));
+        }
+
+        // ในกรณีที่ไม่พบอีเมล หรือเกิดข้อผิดพลาดอื่นๆ
+        $key = Str::lower(str_replace('passwords.', '', $status));
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors(['email' => __("auth.passwords.{$key}")]);
+    }
+}
+
+---
+Step 17: แก้ไขหน้า ForgotPassword.tsx
+---
+import { FormEventHandler } from 'react'
+import { Head, Link, useForm } from '@inertiajs/react'
+import GuestLayout from '@/Layouts/GuestLayout'
+import InputError from '@/Components/InputError'
+import InputLabel from '@/Components/InputLabel'
+import TextInput from '@/Components/TextInput'
+
+interface ForgotPasswordForm {
+  email: string
+  [key: string]: string
+}
+
+export default function ForgotPassword({ status }: { status?: string }) {
+
+  // ใช้ useForm hook เพื่อจัดการฟอร์ม
+  const { data, setData, post, processing, errors } = useForm<ForgotPasswordForm>({
+    email: '',
+  })
+
+  // ฟังก์ชันสำหรับ submit ฟอร์ม
+  const submit: FormEventHandler = (e) => {
+    e.preventDefault()
+    post(route('password.email'))
+  }
+
+  return (
+    <GuestLayout>
+      <Head title="ลืมรหัสผ่าน" />
+      
+      <div className="mb-4 text-center">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">ลืมรหัสผ่าน</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">ระบุอีเมลของคุณเพื่อรีเซ็ตรหัสผ่าน</p>
+      </div>
+
+      {status && (
+        <div className="mb-4 text-sm font-medium text-green-600 dark:text-green-400">
+          {status}
+        </div>
+      )}
+
+      <form onSubmit={submit} method="POST">
+        <div>
+          <InputLabel htmlFor="email" value="อีเมล" />
+
+          <TextInput
+            id="email"
+            type="text"
+            name="email"
+            value={data.email}
+            className="mt-1 block w-full"
+            onChange={(e) => setData('email', e.target.value)}
+            autoFocus
+          />
+
+          <InputError message={errors.email} className="mt-2" />
+        </div>
+
+        <div className="flex items-center justify-between mt-4">
+          <Link
+            href={route('login')}
+            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            กลับไปหน้าเข้าสู่ระบบ
+          </Link>
+
+          <button 
+            type="submit" 
+            className="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+            disabled={processing}
+          >
+            ส่งลิงก์รีเซ็ตรหัสผ่าน
+          </button>
+        </div>
+      </form>
+    </GuestLayout>
+  )
+} 
+
+---
+Step 18: ติดตั้งโปรแกรมในการส่ง-รับเมล์ใน local
+----
+ใช้โปรแกรมชื่อ MailPit
+https://github.com/axllent/mailpit/releases/tag/v1.24.0
+
+รันโปรกรม mailpit
+---
+macos -> ./mailpit
+windows -> mailpit.exe
+
+---
+Step 19: แก้ไขไฟล์ .env เพื่อกำหนดค่า smtp mail
+---
+#MailPit
+MAIL_MAILER=smtp
+MAIL_SCHEME=null
+MAIL_HOST=127.0.0.1
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+---
+Step 20: แก้ไข route ทีไฟล์ auth.php เพื่อเพิ่ม password-reset
+---
+<?php
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\NewPasswordController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| เส้นทางสำหรับผู้ใช้ที่ยังไม่ได้เข้าสู่ระบบ (Guest Routes)
+|--------------------------------------------------------------------------
+|
+| เส้นทางในกลุ่มนี้จะใช้ middleware 'guest' ซึ่งจะอนุญาตให้เข้าถึงได้
+| เฉพาะผู้ใช้ที่ยังไม่ได้เข้าสู่ระบบเท่านั้น หากผู้ใช้เข้าสู่ระบบแล้ว
+| จะถูกเปลี่ยนเส้นทางไปยังหน้าหลัก
+|
+*/
+
+Route::middleware('guest')->group(function () {
+    
+    // การลงทะเบียนผู้ใช้ใหม่
+    Route::get('register', [RegisteredUserController::class, 'create'])->name('register');  // แสดงฟอร์มลงทะเบียน
+    Route::post('register', [RegisteredUserController::class, 'store']);  // บันทึกข้อมูลผู้ใช้ใหม่
+
+    // การเข้าสู่ระบบ
+    Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');  // แสดงฟอร์มเข้าสู่ระบบ
+    Route::post('login', [AuthenticatedSessionController::class, 'store']);  // ตรวจสอบและสร้างเซสชันการเข้าสู่ระบบ
+
+    // การขอรีเซ็ตรหัสผ่าน
+    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');  // แสดงฟอร์มขอรีเซ็ตรหัสผ่าน
+    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');  // ส่งอีเมลลิงก์รีเซ็ตรหัสผ่าน
+
+    // การรีเซ็ตรหัสผ่าน
+    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');  // แสดงฟอร์มรีเซ็ตรหัสผ่านพร้อมโทเค็น
+    Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store');  // บันทึกรหัสผ่านใหม่
+     
+});
+
+---
+Step 21: ทำการสร้าง Controller "NewPasswordController.php"
+----
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class NewPasswordController extends Controller
+{
+    /**
+     * แสดงฟอร์มรีเซ็ตรหัสผ่าน
+     */
+    public function create(Request $request): Response
+    {
+        return Inertia::render('Auth/ResetPassword', [
+            'email' => $request->email,
+            'token' => $request->route('token'),
+        ]);
+    }
+
+    /**
+     * บันทึกรหัสผ่านใหม่
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        // เราจะใช้ Password::reset เพื่อรีเซ็ตรหัสผ่านของผู้ใช้
+        // หากรีเซ็ตรหัสผ่านสำเร็จ เราจะส่งกลับไปยังหน้าฟอร์มเข้าสู่ระบบ
+        // หากไม่สำเร็จ เราจะส่งกลับไปยังหน้าฟอร์มพร้อมกับข้อความแสดงข้อผิดพลาด
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($request->password),
+                    'remember_token' => Str::random(60),
+                ])->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        // ถ้ารีเซ็ตรหัสผ่านสำเร็จ เราจะส่งกลับไปยังหน้าฟอร์มเข้าสู่ระบบ
+        // หากไม่สำเร็จ เราจะส่งกลับไปยังหน้าฟอร์มพร้อมกับข้อความแสดงข้อผิดพลาด
+        // หากสถานะไม่ใช่ PASSWORD_RESET เราจะโยน ValidationException
+        if ($status != Password::PASSWORD_RESET) {
+            throw ValidationException::withMessages([
+                'email' => [__($status)],
+            ]);
+        }
+
+        return redirect()->route('login')->with('status', __($status));
+    }
+}
+
+---
+Step 22: แก้ไขไฟล์ ResetPassword.tsx
+---
+import { FormEventHandler } from 'react'
+import { Head, Link, useForm } from '@inertiajs/react'
+import GuestLayout from '@/Layouts/GuestLayout'
+import InputError from '@/Components/InputError'
+import InputLabel from '@/Components/InputLabel'
+import TextInput from '@/Components/TextInput'
+
+interface ResetPasswordForm {
+  token: string
+  email: string
+  password: string
+  password_confirmation: string
+  [key: string]: string
+}
+
+export default function ResetPassword({ token, email }: { token: string, email: string }) {
+  const { data, setData, post, processing, errors, reset } = useForm<ResetPasswordForm>({
+    token,
+    email,
+    password: '',
+    password_confirmation: '',
+  })
+
+  const submit: FormEventHandler = (e) => {
+    e.preventDefault()
+    post(route('password.store'))
+  }
+
+  return (
+    <GuestLayout>
+      <Head title="รีเซ็ตรหัสผ่าน" />
+      
+      <div className="mb-4 text-center">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">รีเซ็ตรหัสผ่าน</h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">กำหนดรหัสผ่านใหม่สำหรับบัญชีของคุณ</p>
+      </div>
+
+      <form onSubmit={submit}>
+        <div>
+          <InputLabel htmlFor="email" value="อีเมล" />
+          <TextInput
+            id="email"
+            type="email"
+            name="email"
+            value={data.email}
+            className="mt-1 block w-full"
+            onChange={(e) => setData('email', e.target.value)}
+            required
+            autoComplete="username"
+            readOnly
+          />
+          <InputError message={errors.email} className="mt-2" />
+        </div>
+
+        <div className="mt-4">
+          <InputLabel htmlFor="password" value="รหัสผ่านใหม่" />
+          <TextInput
+            id="password"
+            type="password"
+            name="password"
+            value={data.password}
+            className="mt-1 block w-full"
+            autoComplete="new-password"
+            onChange={(e) => setData('password', e.target.value)}
+          />
+          <InputError message={errors.password} className="mt-2" />
+        </div>
+
+        <div className="mt-4">
+          <InputLabel htmlFor="password_confirmation" value="ยืนยันรหัสผ่านใหม่" />
+          <TextInput
+            id="password_confirmation"
+            type="password"
+            name="password_confirmation"
+            value={data.password_confirmation}
+            className="mt-1 block w-full"
+            autoComplete="new-password"
+            onChange={(e) => setData('password_confirmation', e.target.value)}
+          />
+          <InputError message={errors.password_confirmation} className="mt-2" />
+        </div>
+
+        <div className="flex items-center justify-between mt-4">
+          <Link
+            href={route('login')}
+            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            กลับไปหน้าเข้าสู่ระบบ
+          </Link>
+
+          <button 
+            type="submit" 
+            className="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+            disabled={processing}
+          >
+            รีเซ็ตรหัสผ่าน
+          </button>
+        </div>
+      </form>
+    </GuestLayout>
+  )
+} 
+
+Step 23: xxx
